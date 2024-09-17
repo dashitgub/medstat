@@ -33,18 +33,20 @@ class UserManager(BaseUserManager):
         user.save()
         return user
     
-class User(AbstractUser):
+class Users(AbstractUser):
     first_name = models.CharField(max_length=30, verbose_name='имя')
-    last_name = models.CharField(max_length=30, verbose_name=30)
+    last_name = models.CharField(max_length=30, verbose_name='фамилия')
     email = models.EmailField(unique=True)
     age = models.DecimalField(max_digits=2, verbose_name='Возраст')
     year = models.DecimalField(max_digits=4, verbose_name='Год')
     month = models.DecimalField(max_digits=2)
     is_active = models.BooleanField(default=False)
-    activation_code = models.CharField(max_length=4, blank=True)
+    verification_code = models.CharField(max_length=4, blank=True)
     expires_at = models.DateTimeField(null=True, blank=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    objects = UserManager()
 
     def create_verification_code(self, *args, **kwargs):
             if not self.verification_code:
@@ -60,5 +62,5 @@ class User(AbstractUser):
         return timezone.now() > self.expires_at
         
     def __str__(self):
-        return f"{self.phone_number} - {self.verification_code}"
+        return f"{self.email} - {self.verification_code}"
             
